@@ -20,6 +20,12 @@ export default defineConfig({
       component: './Home',
     },
   ],
+  proxy: {
+    '/api/': {
+      target: 'http://localhost:8080',
+      changeOrigin: true,
+    },
+  },
   npmClient: 'pnpm',
 });
 
