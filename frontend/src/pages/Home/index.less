@@ -1,0 +1,277 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+/* ── Page ── */
+.page {
+  min-height: 100vh;
+  background: #0a0e17;
+  margin: -24px;
+  padding: 0;
+}
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  padding: 80px 48px 56px;
+  background: linear-gradient(145deg, #0f172a 0%, #0a0e17 50%, #0c1525 100%);
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(34, 211, 238, 0.06) 1px, transparent 0);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+}
+
+.brand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 20px;
+  user-select: none;
+}
+
+.brandQ {
+  color: #22d3ee;
+  text-shadow: 0 0 40px rgba(34, 211, 238, 0.3);
+}
+
+.brandDash {
+  color: rgba(255, 255, 255, 0.2);
+  margin: 0 2px;
+}
+
+.brandDev {
+  color: #e2e8f0;
+}
+
+.tagline {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 24px;
+  letter-spacing: 0.3px;
+}
+
+.version {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Sections ── */
+.section {
+  padding: 40px 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.section:last-child {
+  border-bottom: none;
+  padding-bottom: 64px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.sectionTag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Architecture Flow ── */
+.archFlow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding: 8px 0 16px;
+}
+
+.archNode {
+  flex: 1;
+  min-width: 160px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.archNode:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.archNodeBar {
+  height: 3px;
+}
+
+.archNodeBody {
+  padding: 16px 20px;
+}
+
+.archNodeLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.archNodeDesc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 4px;
+}
+
+.archNodeDetail {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.archArrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.archNote {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  margin-top: 12px;
+}
+
+/* ── Tech Stack ── */
+.techGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.techBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: default;
+}
+
+.techBadge:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.techDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.techLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+/* ── Capability Cards ── */
+.capCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 24px;
+  height: 100%;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.capCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(34, 211, 238, 0.2);
+  transform: translateY(-2px);
+}
+
+.capIcon {
+  font-size: 20px;
+  color: #22d3ee;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.capTitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 8px;
+}
+
+.capDesc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.6;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero {
+    padding: 48px 24px 40px;
+  }
+
+  .brand {
+    font-size: 40px;
+  }
+
+  .section {
+    padding: 32px 24px;
+  }
+
+  .archFlow {
+    gap: 0;
+  }
+
+  .archNode {
+    min-width: 130px;
+  }
+}
