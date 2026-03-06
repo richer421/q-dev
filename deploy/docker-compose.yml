@@ -1,4 +1,24 @@
 services:
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    expose:
+      - "8080"
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+
   mysql:
     image: mysql:8.0
     environment:
@@ -15,19 +35,20 @@ services:
       - "6379:6379"
 
   kafka:
-    image: bitnami/kafka:3.7
+    image: apache/kafka:latest
     environment:
-      KAFKA_CFG_NODE_ID: 0
-      KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
     ports:
       - "9092:9092"
     volumes:
-      - kafka_data:/bitnami/kafka
+      - kafka_data:/tmp/kafka-logs
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.115.0
