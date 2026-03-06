@@ -3,6 +3,8 @@ module q-dev
 go 1.25.5
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
+	github.com/alicebob/miniredis/v2 v2.37.0
 	github.com/confluentinc/confluent-kafka-go/v2 v2.13.3
 	github.com/gin-contrib/pprof v1.5.3
 	github.com/gin-gonic/gin v1.12.0
@@ -10,6 +12,7 @@ require (
 	github.com/redis/go-redis/extra/redisotel/v9 v9.18.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/spf13/cobra v1.10.2
+	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.3.2
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.66.0
@@ -84,6 +87,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.2 // indirect
+	github.com/yuin/gopher-lua v1.1.1 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.41.0 // indirect
