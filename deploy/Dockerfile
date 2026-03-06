@@ -1,0 +1,25 @@
+# ---------- 构建阶段 ----------
+FROM golang:1.25-alpine AS builder
+
+RUN apk add --no-cache gcc musl-dev librdkafka-dev pkgconf
+
+WORKDIR /src
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+
+COPY backend/ .
+RUN CGO_ENABLED=1 go build -tags musl -o /app/q-dev .
+
+# ---------- 运行阶段 ----------
+FROM alpine:3.21
+
+RUN apk add --no-cache ca-certificates tzdata librdkafka
+
+WORKDIR /app
+COPY --from=builder /app/q-dev .
+COPY backend/conf/config.yaml ./conf/config.yaml
+
+EXPOSE 8080
+
+ENTRYPOINT ["./q-dev"]
+CMD ["server"]

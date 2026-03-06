@@ -1,0 +1,90 @@
+package conf
+
+import (
+	"fmt"
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
+
+var C Config
+
+type Config struct {
+	Server ServerConfig `yaml:"server"`
+	MySQL  MySQLConfig  `yaml:"mysql"`
+	Redis  RedisConfig  `yaml:"redis"`
+	Kafka  KafkaConfig  `yaml:"kafka"`
+	Log    LogConfig    `yaml:"log"`
+	OTel   OTelConfig   `yaml:"otel"`
+}
+
+type ServerConfig struct {
+	Port int `yaml:"port"`
+}
+
+type MySQLConfig struct {
+	Host         string `yaml:"host"`
+	Port         int    `yaml:"port"`
+	User         string `yaml:"user"`
+	Password     string `yaml:"password"`
+	Database     string `yaml:"database"`
+	Charset      string `yaml:"charset"`
+	MaxOpenConns int    `yaml:"max_open_conns"`
+	MaxIdleConns int    `yaml:"max_idle_conns"`
+	MaxLifetime  int    `yaml:"max_lifetime"`
+}
+
+func (m *MySQLConfig) DSN() string {
+	charset := m.Charset
+	if charset == "" {
+		charset = "utf8mb4"
+	}
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
+		m.User, m.Password, m.Host, m.Port, m.Database, charset)
+}
+
+type RedisConfig struct {
+	Addr     string `yaml:"addr"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
+	PoolSize int    `yaml:"pool_size"`
+}
+
+type KafkaConfig struct {
+	Brokers    []string `yaml:"brokers"`
+	MaxRetries int      `yaml:"max_retries"`
+}
+
+type LogConfig struct {
+	Level  string        `yaml:"level"`
+	Format string        `yaml:"format"`
+	File   LogFileConfig `yaml:"file"`
+}
+
+type LogFileConfig struct {
+	Enabled  bool   `yaml:"enabled"`
+	Path     string `yaml:"path"`
+	MaxSize  int    `yaml:"max_size"`
+	MaxAge   int    `yaml:"max_age"`
+	Compress bool   `yaml:"compress"`
+}
+
+type OTelConfig struct {
+	Enabled     bool             `yaml:"enabled"`
+	ServiceName string           `yaml:"service_name"`
+	Endpoint    string           `yaml:"endpoint"`
+	Prometheus  PrometheusConfig `yaml:"prometheus"`
+}
+
+type PrometheusConfig struct {
+	Enabled bool   `yaml:"enabled"`
+	Path    string `yaml:"path"`
+}
+
+func Load(path string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	return yaml.Unmarshal(data, &C)
+}

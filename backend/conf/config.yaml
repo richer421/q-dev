@@ -1,0 +1,47 @@
+app:
+  name: q-dev
+  description: "AI 全栈开发脚手架"
+
+
+server:
+  port: 8080
+
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: "root"
+  password: "root"
+  database: "q_dev"
+  charset: "utf8mb4"
+  max_open_conns: 100
+  max_idle_conns: 10
+  max_lifetime: 3600
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: ""
+  db: 0
+  pool_size: 10
+
+kafka:
+  brokers:
+    - "127.0.0.1:9092"
+  max_retries: 3
+
+otel:
+  enabled: false
+  service_name: "q-dev"
+  endpoint: "localhost:4317"
+  prometheus:
+    enabled: true
+    path: "/metrics"
+
+log:
+  level: "info"
+  format: "console"
+  file:
+    enabled: false
+    path: "logs/app.log"
+    max_size: 100
+    max_age: 30
+    compress: true
