@@ -21,6 +21,8 @@ func init() {
 	gin.SetMode(gin.TestMode)
 }
 
+// ---------- helpers ----------
+
 func setupMockDB(t *testing.T) sqlmock.Sqlmock {
 	t.Helper()
 	gormDB, mock, err := testutil.NewMockDB()
@@ -29,87 +31,68 @@ func setupMockDB(t *testing.T) sqlmock.Sqlmock {
 	return mock
 }
 
-func TestHelloWorldAPI_List_Success(t *testing.T) {
-	mock := setupMockDB(t)
-
-	// FindByPage first does SELECT * with ORDER BY, LIMIT, OFFSET
-	// When result size (1) < limit (10), it skips the count query
-	// and computes count = size + offset = 1 + 0 = 1
-	mock.ExpectQuery("SELECT \\*").
-		WillReturnRows(sqlmock.NewRows([]string{"id", "title", "description", "created_at", "updated_at"}).
-			AddRow(1, "test", "desc", time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)))
-
+func newTestContext(t *testing.T, method, url string, params ...gin.Param) (*httptest.ResponseRecorder, *gin.Context) {
+	t.Helper()
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest("GET", "/api/v1/hello-world?page=1&page_size=10", nil)
+	c.Request = httptest.NewRequest(method, url, nil)
+	c.Params = params
+	return w, c
+}
 
-	h := NewHelloWorldAPI()
-	h.List(c)
+func helloWorldRow() *sqlmock.Rows {
+	return sqlmock.NewRows([]string{"id", "title", "description", "created_at", "updated_at"}).
+		AddRow(1, "test", "desc", time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
+}
 
-	assert.Equal(t, http.StatusOK, w.Code)
-
+func parseResp(t *testing.T, w *httptest.ResponseRecorder) common.Response {
+	t.Helper()
 	var resp common.Response
 	err := json.Unmarshal(w.Body.Bytes(), &resp)
-	assert.NoError(t, err)
-	assert.Equal(t, 0, resp.Code)
+	require.NoError(t, err)
+	return resp
+}
 
+// ---------- tests ----------
+
+func TestHelloWorldAPI_List_Success(t *testing.T) {
+	mock := setupMockDB(t)
+	mock.ExpectQuery("SELECT \\*").WillReturnRows(helloWorldRow())
+
+	w, c := newTestContext(t, "GET", "/api/v1/hello-world?page=1&page_size=10")
+	NewHelloWorldAPI().List(c)
+
+	resp := parseResp(t, w)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, 0, resp.Code)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestHelloWorldAPI_List_MissingParams(t *testing.T) {
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest("GET", "/api/v1/hello-world", nil) // missing page, page_size
+	w, c := newTestContext(t, "GET", "/api/v1/hello-world")
+	NewHelloWorldAPI().List(c)
 
-	h := NewHelloWorldAPI()
-	h.List(c)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-
-	var resp common.Response
-	err := json.Unmarshal(w.Body.Bytes(), &resp)
-	assert.NoError(t, err)
-	assert.Equal(t, -1, resp.Code) // param validation failure
+	resp := parseResp(t, w)
+	assert.Equal(t, -1, resp.Code)
 }
 
 func TestHelloWorldAPI_Get_Success(t *testing.T) {
 	mock := setupMockDB(t)
+	mock.ExpectQuery("SELECT \\*").WillReturnRows(helloWorldRow())
 
-	mock.ExpectQuery("SELECT \\*").
-		WillReturnRows(sqlmock.NewRows([]string{"id", "title", "description", "created_at", "updated_at"}).
-			AddRow(1, "test", "desc", time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)))
+	w, c := newTestContext(t, "GET", "/api/v1/hello-world/1", gin.Param{Key: "id", Value: "1"})
+	NewHelloWorldAPI().Get(c)
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest("GET", "/api/v1/hello-world/1", nil)
-	c.Params = gin.Params{{Key: "id", Value: "1"}}
-
-	h := NewHelloWorldAPI()
-	h.Get(c)
-
+	resp := parseResp(t, w)
 	assert.Equal(t, http.StatusOK, w.Code)
-
-	var resp common.Response
-	err := json.Unmarshal(w.Body.Bytes(), &resp)
-	assert.NoError(t, err)
 	assert.Equal(t, 0, resp.Code)
-
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestHelloWorldAPI_Get_InvalidID(t *testing.T) {
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest("GET", "/api/v1/hello-world/abc", nil)
-	c.Params = gin.Params{{Key: "id", Value: "abc"}}
+	w, c := newTestContext(t, "GET", "/api/v1/hello-world/abc", gin.Param{Key: "id", Value: "abc"})
+	NewHelloWorldAPI().Get(c)
 
-	h := NewHelloWorldAPI()
-	h.Get(c)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-
-	var resp common.Response
-	err := json.Unmarshal(w.Body.Bytes(), &resp)
-	assert.NoError(t, err)
-	assert.Equal(t, -1, resp.Code) // parse ID failure
+	resp := parseResp(t, w)
+	assert.Equal(t, -1, resp.Code)
 }
