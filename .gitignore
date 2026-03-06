@@ -27,6 +27,10 @@ deploy/*_data/
 # Swagger 自动生成文档
 backend/gen/docs/
 
+# 测试覆盖率
+backend/coverage.out
+backend/coverage.html
+
 # 临时文件
 tmp/
 *.tmp
