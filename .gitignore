@@ -30,3 +30,9 @@ backend/gen/docs/
 # 临时文件
 tmp/
 *.tmp
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/src/.umi/
+frontend/src/.umi-production/

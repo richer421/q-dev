@@ -4,7 +4,17 @@
 
 | 能力 | 模块 | 入口 | 说明 |
 |---|---|---|---|
-| HelloWorld | hello_world | `GET /api/v1/hello-world` | 示例模块，验证脚手架各层联通 |
+| HelloWorld CRUD | hello_world | `/api/v1/hello-world` | 示例模块，完整 CRUD，验证脚手架各层联通 |
+
+### HelloWorld 接口清单
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | /api/v1/hello-world | 分页列表 |
+| GET | /api/v1/hello-world/:id | 详情 |
+| POST | /api/v1/hello-world | 创建 |
+| PUT | /api/v1/hello-world/:id | 更新 |
+| DELETE | /api/v1/hello-world/:id | 删除 |
 
 ## Redis
 
@@ -23,3 +33,10 @@
 - `GET /healthz` — 存活探针，直接返回 200
 - `GET /readyz` — 就绪探针，检查 MySQL/Redis/Kafka 连通性，全通 200，任一失败 503
 - `/debug/pprof/*` — Go pprof 性能分析端点
+
+## 前端
+
+- 框架：Ant Design Pro（umi max）
+- UI：antd 5.x
+- 开发地址：`http://localhost:8000`
+- API 代理：`/api/*` → `http://localhost:8080`
