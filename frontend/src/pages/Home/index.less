@@ -1,191 +1,193 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
-
 /* ── Page ── */
 .page {
-  min-height: 100vh;
-  background: #0a0e17;
+  min-height: calc(100vh - 48px);
+  background: #f5f7fa;
   margin: -24px;
   padding: 0;
 }
 
 /* ── Hero ── */
 .hero {
-  position: relative;
-  padding: 80px 48px 56px;
-  background: linear-gradient(145deg, #0f172a 0%, #0a0e17 50%, #0c1525 100%);
-  overflow: hidden;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  gap: 48px;
+  padding: 64px 48px;
+  background: linear-gradient(135deg, #fff 0%, #f0f5ff 100%);
+  border-bottom: 1px solid #e8e8e8;
 }
 
-.gridOverlay {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(34, 211, 238, 0.06) 1px,
-    transparent 0
-  );
-  background-size: 32px 32px;
-  pointer-events: none;
+.heroMain {
+  flex: 1;
 }
 
-.heroContent {
-  position: relative;
-  z-index: 1;
-  max-width: 720px;
+.heroSide {
+  flex-shrink: 0;
 }
 
 .brand {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 56px;
+  font-size: 48px;
   font-weight: 700;
   letter-spacing: -2px;
   line-height: 1;
-  margin-bottom: 20px;
-  user-select: none;
+  margin-bottom: 16px;
 }
 
 .brandQ {
-  color: #22d3ee;
-  text-shadow: 0 0 40px rgba(34, 211, 238, 0.3);
+  color: #1677ff;
 }
 
 .brandDash {
-  color: rgba(255, 255, 255, 0.2);
+  color: #d9d9d9;
   margin: 0 2px;
 }
 
 .brandDev {
-  color: #e2e8f0;
+  color: #1f1f1f;
 }
 
 .tagline {
-  font-size: 20px;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 500;
+  font-size: 24px;
+  color: #1f1f1f;
+  font-weight: 600;
   margin-bottom: 8px;
-  letter-spacing: 0.5px;
 }
 
 .subtitle {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.35);
-  margin-bottom: 24px;
-  letter-spacing: 0.3px;
+  color: #8c8c8c;
+  margin-bottom: 20px;
 }
 
-.version {
+.tags {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.techHint {
+  font-size: 12px;
+  color: #bfbfbf;
+}
+
+/* Code Block */
+.codeBlock {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 20px 24px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  min-width: 280px;
+}
+
+.codeLine {
+  display: flex;
+  gap: 12px;
+}
+
+.codeComment {
+  color: #6a9955;
+}
+
+.codeCmd {
+  color: #dcdcaa;
+}
+
+.codeBlank {
+  height: 8px;
 }
 
 /* ── Sections ── */
 .section {
   padding: 40px 48px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid #e8e8e8;
+  background: #fff;
 }
 
 .section:last-child {
   border-bottom: none;
-  padding-bottom: 64px;
-}
-
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.sectionTag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: #22d3ee;
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.15);
-  padding: 3px 10px;
-  border-radius: 3px;
 }
 
 .sectionTitle {
   font-size: 16px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* ── Architecture Flow ── */
-.archFlow {
+  font-weight: 600;
+  color: #1f1f1f;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.sectionIcon {
+  color: #1677ff;
+}
+
+/* ── Architecture ── */
+.archFlow {
+  display: flex;
+  align-items: stretch;
   gap: 0;
-  overflow-x: auto;
-  padding: 8px 0 16px;
 }
 
 .archNode {
   flex: 1;
-  min-width: 160px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
   border-radius: 8px;
-  overflow: hidden;
-  transition: border-color 0.2s, background 0.2s;
+  padding: 20px;
+  transition: all 0.2s;
 }
 
 .archNode:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: #1677ff;
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.1);
 }
 
-.archNodeBar {
+.archNodeLine {
+  width: 40px;
   height: 3px;
-}
-
-.archNodeBody {
-  padding: 16px 20px;
+  border-radius: 2px;
+  margin-bottom: 12px;
 }
 
 .archNodeLabel {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   margin-bottom: 4px;
 }
 
 .archNodeDesc {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #595959;
   margin-bottom: 4px;
 }
 
 .archNodeDetail {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.25);
+  font-size: 12px;
+  color: #bfbfbf;
 }
 
 .archArrow {
-  flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 0 4px;
+  padding: 0 12px;
+  color: #d9d9d9;
+  font-size: 20px;
 }
 
 .archNote {
-  font-family: 'JetBrains Mono', monospace;
+  margin-top: 16px;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.25);
-  margin-top: 12px;
+  color: #8c8c8c;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ── Tech Stack ── */
 .techGrid {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .techBadge {
@@ -193,77 +195,75 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #fff;
+  border: 1px solid #e8e8e8;
   border-radius: 6px;
-  transition: border-color 0.2s, background 0.2s;
+  font-size: 13px;
+  color: #595959;
+  transition: all 0.2s;
   cursor: default;
 }
 
 .techBadge:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: #1677ff;
+  color: #1677ff;
 }
 
 .techDot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.techLabel {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
 }
 
 /* ── Capability Cards ── */
 .capCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
   border-radius: 8px;
   padding: 24px;
   height: 100%;
-  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  transition: all 0.2s;
 }
 
 .capCard:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(34, 211, 238, 0.2);
-  transform: translateY(-2px);
+  border-color: #1677ff;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .capIcon {
-  font-size: 20px;
-  color: #22d3ee;
+  font-size: 24px;
+  color: #1677ff;
   margin-bottom: 16px;
-  opacity: 0.8;
 }
 
 .capTitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  color: #1f1f1f;
   margin-bottom: 8px;
 }
 
 .capDesc {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 13px;
+  color: #8c8c8c;
   line-height: 1.6;
 }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .hero {
-    padding: 48px 24px 40px;
+    flex-direction: column;
+    padding: 40px 24px;
+    gap: 32px;
   }
 
   .brand {
-    font-size: 40px;
+    font-size: 36px;
+  }
+
+  .tagline {
+    font-size: 20px;
   }
 
   .section {
@@ -271,10 +271,17 @@
   }
 
   .archFlow {
-    gap: 0;
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .archNode {
-    min-width: 130px;
+  .archArrow {
+    transform: rotate(90deg);
+    padding: 8px 0;
+    justify-content: center;
+  }
+
+  .codeBlock {
+    min-width: auto;
   }
 }
