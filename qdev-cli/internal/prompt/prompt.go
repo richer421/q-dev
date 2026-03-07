@@ -17,11 +17,18 @@ func Run(projectName string) (*config.Config, error) {
 		cfg.ProjectName = projectName
 	}
 
-	// 设置默认模块名
+	// 设置默认值
 	defaultModule := fmt.Sprintf("github.com/%s/%s", os.Getenv("USER"), cfg.ProjectName)
 	if cfg.ProjectName == "" {
 		defaultModule = fmt.Sprintf("github.com/%s/my-project", os.Getenv("USER"))
 	}
+	defaultAuthor := os.Getenv("USER")
+	defaultDesc := "A project created by qdev"
+
+	// 预填充默认值，用户直接回车即可
+	cfg.ModuleName = defaultModule
+	cfg.Author = defaultAuthor
+	cfg.Description = defaultDesc
 
 	// 构建表单
 	var forms []huh.Field
@@ -29,12 +36,12 @@ func Run(projectName string) (*config.Config, error) {
 	// 如果项目名称未传入，添加项目名称输入
 	if projectName == "" {
 		forms = append(forms, huh.NewInput().
-			Title("项目名称").
+			Title("Project Name").
 			Placeholder("my-project").
 			Value(&cfg.ProjectName).
 			Validate(func(s string) error {
 				if s == "" {
-					return fmt.Errorf("项目名称不能为空")
+					return fmt.Errorf("project name required")
 				}
 				return nil
 			}))
@@ -43,22 +50,13 @@ func Run(projectName string) (*config.Config, error) {
 	// 添加其他字段
 	forms = append(forms,
 		huh.NewInput().
-			Title("Go 模块名").
-			Placeholder(defaultModule).
-			Value(&cfg.ModuleName).
-			Validate(func(s string) error {
-				if s == "" {
-					return fmt.Errorf("模块名不能为空")
-				}
-				return nil
-			}),
+			Title("Go Module").
+			Value(&cfg.ModuleName),
 		huh.NewInput().
-			Title("作��").
-			Placeholder(os.Getenv("USER")).
+			Title("Author").
 			Value(&cfg.Author),
 		huh.NewInput().
-			Title("描述").
-			Placeholder("A project created by qdev").
+			Title("Description").
 			Value(&cfg.Description),
 	)
 
@@ -66,18 +64,18 @@ func Run(projectName string) (*config.Config, error) {
 	var mode string = "fullstack"
 	forms = append(forms,
 		huh.NewSelect[string]().
-			Title("项目模式").
+			Title("Project Mode").
 			Options(
-				huh.NewOption("全栈", "fullstack"),
-				huh.NewOption("纯后端", "backend"),
+				huh.NewOption("Full Stack", "fullstack"),
+				huh.NewOption("Backend Only", "backend"),
 			).
 			Value(&mode),
 	)
 
 	// 自定义按键绑定，支持 Tab 切换选项
 	keyMap := huh.NewDefaultKeyMap()
-	keyMap.Select.Down.SetKeys("down", "j", "tab")
-	keyMap.Select.Up.SetKeys("up", "k", "shift+tab")
+	keyMap.Select.Next.SetKeys("down", "j", "tab", "right", "l")
+	keyMap.Select.Prev.SetKeys("up", "k", "shift+tab", "left", "h")
 
 	// 运行表单
 	err := huh.NewForm(
@@ -90,31 +88,20 @@ func Run(projectName string) (*config.Config, error) {
 
 	cfg.BackendOnly = mode == "backend"
 
-	// 设置默认值
-	if cfg.ModuleName == "" {
-		cfg.ModuleName = defaultModule
-	}
-	if cfg.Author == "" {
-		cfg.Author = os.Getenv("USER")
-	}
-	if cfg.Description == "" {
-		cfg.Description = "A project created by qdev"
-	}
-
 	return cfg, nil
 }
 
 // ValidateProjectName validates the project name
 func ValidateProjectName(name string) error {
 	if name == "" {
-		return fmt.Errorf("项目名称不能为空")
+		return fmt.Errorf("project name cannot be empty")
 	}
 	if len(name) > 100 {
-		return fmt.Errorf("项目名称过长")
+		return fmt.Errorf("project name too long")
 	}
 	for _, r := range name {
 		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_') {
-			return fmt.Errorf("项目名称包含非法字符: %c", r)
+			return fmt.Errorf("project name contains invalid character: %c", r)
 		}
 	}
 	return nil
@@ -130,7 +117,7 @@ func CheckTargetDir(path string, force bool) error {
 		return err
 	}
 	if !info.IsDir() {
-		return fmt.Errorf("%s 已存在且不是目录", path)
+		return fmt.Errorf("%s exists but is not a directory", path)
 	}
 	if !force {
 		entries, err := os.ReadDir(path)
@@ -138,7 +125,7 @@ func CheckTargetDir(path string, force bool) error {
 			return err
 		}
 		if len(entries) > 0 {
-			return fmt.Errorf("目录 %s 不为空，使用 --force 强制覆盖", path)
+			return fmt.Errorf("directory %s is not empty, use --force to overwrite", path)
 		}
 	}
 	return nil
