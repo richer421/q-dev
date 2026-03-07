@@ -2,8 +2,7 @@
 
 # qdev-cli 安装脚本
 # 用法:
-#   curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
-#   curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash -s -- --help
+#   curl -fsSL https://github.com/richer421/q-dev/releases/latest/download/install.sh | bash
 
 set -e
 
@@ -19,50 +18,45 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    echo -e "${GREEN}[INFO]${NC} $1" >&2
 }
 
 warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo -e "${YELLOW}[WARN]${NC} $1" >&2
 }
 
 error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1" >&2
     exit 1
 }
 
 hint() {
-    echo -e "${BLUE}[HINT]${NC} $1"
+    echo -e "${BLUE}[HINT]${NC} $1" >&2
 }
 
 # 帮助信息
 show_help() {
-    echo ""
-    echo "  Q-DEV 脚手架工具安装程序"
-    echo ""
-    echo "用法:"
-    echo "  curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash"
-    echo ""
-    echo "选项:"
-    echo "  -f, --force      强制重新安装（覆盖已有版本）"
-    echo "  -v, --version    指定版本号（默认最新版）"
-    echo "  -d, --dir        指定安装目录（默认 /usr/local/bin）"
-    echo "  -u, --uninstall  卸载"
-    echo "  -h, --help       显示帮助"
-    echo ""
-    echo "示例:"
-    echo "  # 安装最新版"
-    echo "  curl -fsSL ... | bash"
-    echo ""
-    echo "  # 强制重新安装"
-    echo "  curl -fsSL ... | bash -s -- --force"
-    echo ""
-    echo "  # 安装指定版本"
-    echo "  curl -fsSL ... | bash -s -- --version v1.0.0"
-    echo ""
-    echo "  # 卸载"
-    echo "  curl -fsSL ... | bash -s -- --uninstall"
-    echo ""
+    cat << 'EOF'
+
+  Q-DEV 脚手架工具安装程序
+
+用法:
+  curl -fsSL https://github.com/richer421/q-dev/releases/latest/download/install.sh | bash
+
+选项:
+  -f, --force      强制重新安装
+  -v, --version    指定版本号（默认最新版）
+  -d, --dir        指定安装目录（默认 /usr/local/bin）
+  -u, --uninstall  卸载
+  -h, --help       显示帮助
+
+示例:
+  curl -fsSL ... | bash                           # 安装最新版
+  curl -fsSL ... | bash -s -- --force             # 强制重新安装
+  curl -fsSL ... | bash -s -- --version v1.0.0    # 安装指定版本
+  curl -fsSL ... | bash -s -- --uninstall         # 卸载
+
+EOF
 }
 
 # 解析参数
@@ -119,11 +113,7 @@ detect_arch() {
 # 获取已安装版本
 get_installed_version() {
     if command -v ${BINARY} &> /dev/null; then
-        # 假设二进制有 --version 输出，如果没有则返回 "unknown"
-        local ver=$(${BINARY} --version 2>/dev/null || echo "unknown")
-        echo "$ver"
-    else
-        echo ""
+        ${BINARY} version 2>/dev/null | head -1 || echo "unknown"
     fi
 }
 
@@ -132,11 +122,9 @@ get_latest_version() {
     local version
     version=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     if [ -z "$version" ]; then
-        warn "无法获取最新版本，使用 main 分支"
-        echo "main"
-    else
-        echo "$version"
+        error "无法获取最新版本，请检查网络连接"
     fi
+    echo "$version"
 }
 
 # 卸载
@@ -144,8 +132,6 @@ do_uninstall() {
     local bin_path="${INSTALL_DIR}/${BINARY}"
 
     if [ ! -f "$bin_path" ]; then
-        warn "${BINARY} 未安装在 ${INSTALL_DIR}"
-        # 检查是否在其他位置
         if command -v ${BINARY} &> /dev/null; then
             local actual_path=$(command -v ${BINARY})
             info "发现 ${BINARY} 在 ${actual_path}"
@@ -155,6 +141,8 @@ do_uninstall() {
                 rm -f "$actual_path"
                 info "已删除"
             fi
+        else
+            warn "${BINARY} 未安装"
         fi
         exit 0
     fi
@@ -205,33 +193,24 @@ download_binary() {
     local os=$1
     local arch=$2
     local version=$3
-    local download_url
-    local tmp_dir
-    local tmp_file
 
-    tmp_dir=$(mktemp -d)
-    tmp_file="${tmp_dir}/${BINARY}"
+    TMP_DIR=$(mktemp -d)
+    TMP_FILE="${TMP_DIR}/${BINARY}"
 
-    if [ "$version" = "main" ]; then
-        # 如果没有 release，提示用户从源码构建
-        error "没有可用的预编译版本。\n请从源码构建:\n  git clone https://github.com/${REPO}.git\n  cd q-dev/qdev-cli && go build -o qdev ."
-    fi
-
-    download_url="https://github.com/${REPO}/releases/download/${version}/${BINARY}-${os}-${arch}"
+    local download_url="https://github.com/${REPO}/releases/download/${version}/${BINARY}-${os}-${arch}"
 
     info "下载 ${download_url}..."
 
-    if ! curl -fsSL --progress-bar --fail "${download_url}" -o "${tmp_file}"; then
-        error "下载失败: ${download_url}\n\n请检查版本是否存在:\n  https://github.com/${REPO}/releases\n\n或手动下载后安装"
+    if ! curl -fsSL --progress-bar --fail "${download_url}" -o "${TMP_FILE}"; then
+        rm -rf "${TMP_DIR}"
+        error "下载失败: ${download_url}\n\n请检查版本是否存在:\n  https://github.com/${REPO}/releases"
     fi
 
-    chmod +x "${tmp_file}"
-    echo "${tmp_file}"
+    chmod +x "${TMP_FILE}"
 }
 
 # 安装
 install() {
-    local tmp_file=$1
     local bin_path="${INSTALL_DIR}/${BINARY}"
 
     info "安装到 ${bin_path}..."
@@ -246,13 +225,13 @@ install() {
     fi
 
     if [ -w "${INSTALL_DIR}" ]; then
-        mv "${tmp_file}" "${bin_path}"
+        mv "${TMP_FILE}" "${bin_path}"
     else
-        sudo mv "${tmp_file}" "${bin_path}"
+        sudo mv "${TMP_FILE}" "${bin_path}"
     fi
 
     # 清理临时目录
-    rm -rf "$(dirname "${tmp_file}")"
+    rm -rf "${TMP_DIR}"
 }
 
 # 验证安装
@@ -265,7 +244,7 @@ verify() {
         info "使用 '${BINARY} init my-project' 创建新项目"
     else
         warn "${BINARY} 已安装但不在 PATH 中"
-        hint "请将 ${INSTALL_DIR} 添加到 PATH，或使用绝对路径:\n  ${INSTALL_DIR}/${BINARY} init my-project"
+        hint "请将 ${INSTALL_DIR} 添加到 PATH"
     fi
 }
 
@@ -296,18 +275,14 @@ main() {
     info "操作系统: ${os}"
     info "架构: ${arch}"
     info "目标版本: ${version}"
-
-    if [ -n "$installed_version" ]; then
-        info "当前版本: ${installed_version}"
-    fi
+    [ -n "$installed_version" ] && info "当前版本: ${installed_version}"
     echo ""
 
     # 检查是否已安装
     check_installed "$installed_version" "$version"
 
-    local tmp_file
-    tmp_file=$(download_binary "${os}" "${arch}" "${version}")
-    install "${tmp_file}"
+    download_binary "${os}" "${arch}" "${version}"
+    install
     verify
 }
 
