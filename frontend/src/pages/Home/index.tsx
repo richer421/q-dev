@@ -113,9 +113,7 @@ const Home: React.FC = () => {
             <span className={styles.brandDash}>-</span>
             <span className={styles.brandDev}>DEV</span>
           </div>
-          <div className={styles.tagline}>
-            AI 驱动的全栈开发脚手架
-          </div>
+          <div className={styles.tagline}>AI 驱动的全栈开发脚手架</div>
           <div className={styles.subtitle}>
             让 AI 理解你的架构，让开发回归本质
           </div>

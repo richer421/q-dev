@@ -2,11 +2,14 @@
   "private": true,
   "author": "richer <yxxchange@163.com>",
   "scripts": {
-    "dev": "max dev",
     "build": "max build",
+    "dev": "max dev",
     "format": "prettier --cache --write .",
-    "prepare": "husky",
+    "format:check": "prettier --cache --check .",
     "postinstall": "max setup",
+    "lint": "max lint --eslint-only",
+    "lint:fix": "max lint --eslint-only --fix",
+    "prepare": "husky",
     "setup": "max setup",
     "start": "npm run dev"
   },
