@@ -4,71 +4,97 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/charmbracelet/huh"
 	"github.com/richer421/qdev-cli/internal/config"
 )
-
-// survey 选项 - 限制页面大小，避免终端滚动问题
-var surveyOpts = []survey.AskOpt{
-	survey.WithPageSize(3),
-}
 
 // Run executes the interactive prompt
 func Run(projectName string) (*config.Config, error) {
 	cfg := &config.Config{}
 
-	// 如果项目名称通过参数传入，跳过第一个问题
-	if projectName == "" {
-		prompt := &survey.Input{
-			Message: "项目名称:",
-			Default: "my-project",
-		}
-		opts := append(surveyOpts, survey.WithValidator(survey.Required))
-		if err := survey.AskOne(prompt, &cfg.ProjectName, opts...); err != nil {
-			return nil, err
-		}
-	} else {
+	// 如果项目名称已通过参数传入，直接使用
+	if projectName != "" {
 		cfg.ProjectName = projectName
-		fmt.Printf("? 项目名称: %s\n", cfg.ProjectName)
 	}
 
+	// 设置默认模块名
 	defaultModule := fmt.Sprintf("github.com/%s/%s", os.Getenv("USER"), cfg.ProjectName)
-	modulePrompt := &survey.Input{
-		Message: "Go 模块名:",
-		Default: defaultModule,
+	if cfg.ProjectName == "" {
+		defaultModule = fmt.Sprintf("github.com/%s/my-project", os.Getenv("USER"))
 	}
-	opts := append(surveyOpts, survey.WithValidator(survey.Required))
-	if err := survey.AskOne(modulePrompt, &cfg.ModuleName, opts...); err != nil {
+
+	// 构建表单
+	var forms []huh.Field
+
+	// 如果项目名称未传入，添加项目名称输入
+	if projectName == "" {
+		forms = append(forms, huh.NewInput().
+			Title("项目名称").
+			Placeholder("my-project").
+			Value(&cfg.ProjectName).
+			Validate(func(s string) error {
+				if s == "" {
+					return fmt.Errorf("项目名称不能为空")
+				}
+				return nil
+			}))
+	}
+
+	// 添加其他字段
+	forms = append(forms,
+		huh.NewInput().
+			Title("Go 模块名").
+			Placeholder(defaultModule).
+			Value(&cfg.ModuleName).
+			Validate(func(s string) error {
+				if s == "" {
+					return fmt.Errorf("模块名不能为空")
+				}
+				return nil
+			}),
+		huh.NewInput().
+			Title("作者").
+			Placeholder(os.Getenv("USER")).
+			Value(&cfg.Author),
+		huh.NewInput().
+			Title("描述").
+			Placeholder("A project created by qdev").
+			Value(&cfg.Description),
+	)
+
+	// 项目模式选择
+	var mode string = "fullstack"
+	forms = append(forms,
+		huh.NewSelect[string]().
+			Title("项目模式").
+			Options(
+				huh.NewOption("全栈", "fullstack"),
+				huh.NewOption("纯后端", "backend"),
+			).
+			Value(&mode),
+	)
+
+	// 运行表单
+	err := huh.NewForm(
+		huh.NewGroup(forms...),
+	).Run()
+
+	if err != nil {
 		return nil, err
 	}
 
-	authorPrompt := &survey.Input{
-		Message: "作者:",
-		Default: os.Getenv("USER"),
-	}
-	if err := survey.AskOne(authorPrompt, &cfg.Author, surveyOpts...); err != nil {
-		return nil, err
-	}
+	cfg.BackendOnly = mode == "backend"
 
-	descPrompt := &survey.Input{
-		Message: "描述:",
-		Default: "A project created by qdev",
+	// 设置默认值
+	if cfg.ModuleName == "" {
+		cfg.ModuleName = defaultModule
 	}
-	if err := survey.AskOne(descPrompt, &cfg.Description, surveyOpts...); err != nil {
-		return nil, err
+	if cfg.Author == "" {
+		cfg.Author = os.Getenv("USER")
 	}
-
-	modePrompt := &survey.Select{
-		Message:  "项目模式:",
-		Options:  []string{"全栈", "纯后端"},
-		Default:  "全栈",
-		PageSize: 2,
+	if cfg.Description == "" {
+		cfg.Description = "A project created by qdev"
 	}
-	var mode string
-	if err := survey.AskOne(modePrompt, &mode, surveyOpts...); err != nil {
-		return nil, err
-	}
-	cfg.BackendOnly = mode == "纯后端"
 
 	return cfg, nil
 }
