@@ -3,7 +3,7 @@ services:
     profiles: [deploy]
     build:
       context: ..
-      dockerfile: deploy/Dockerfile.frontend
+      dockerfile: deploy/frontend-Dockerfile
     ports:
       - "80:80"
     depends_on:
@@ -14,7 +14,7 @@ services:
     profiles: [deploy]
     build:
       context: ..
-      dockerfile: deploy/Dockerfile
+      dockerfile: deploy/backend-Dockerfile
     ports:
       - "8080:8080"
     environment:

@@ -89,8 +89,8 @@ infra-logs:
 # ---------- Docker（全栈部署） ----------
 
 docker-build:
-	docker build -t $(APP_NAME) -f deploy/Dockerfile .
-	docker build -t $(APP_NAME)-web -f deploy/Dockerfile.frontend .
+	docker build -t $(APP_NAME) -f deploy/backend-Dockerfile .
+	docker build -t $(APP_NAME)-web -f deploy/frontend-Dockerfile .
 
 docker-up:
 	$(COMPOSE) --profile deploy up -d
