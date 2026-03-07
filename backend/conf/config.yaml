@@ -12,7 +12,6 @@ mysql:
   user: "root"
   password: "root"
   database: "q_dev"
-  charset: "utf8mb4"
   max_open_conns: 100
   max_idle_conns: 10
   max_lifetime: 3600

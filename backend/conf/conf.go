@@ -28,19 +28,14 @@ type MySQLConfig struct {
 	User         string `yaml:"user"`
 	Password     string `yaml:"password"`
 	Database     string `yaml:"database"`
-	Charset      string `yaml:"charset"`
 	MaxOpenConns int    `yaml:"max_open_conns"`
 	MaxIdleConns int    `yaml:"max_idle_conns"`
 	MaxLifetime  int    `yaml:"max_lifetime"`
 }
 
 func (m *MySQLConfig) DSN() string {
-	charset := m.Charset
-	if charset == "" {
-		charset = "utf8mb4"
-	}
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
-		m.User, m.Password, m.Host, m.Port, m.Database, charset)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		m.User, m.Password, m.Host, m.Port, m.Database)
 }
 
 type RedisConfig struct {
