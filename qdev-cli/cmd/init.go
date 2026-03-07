@@ -125,6 +125,11 @@ func runInit(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("更新 go.mod 失败: %w", err)
 	}
 
+	// 清理不需要的文件
+	if err := renderer.CleanUp(targetPath); err != nil {
+		return fmt.Errorf("清理文件失败: %w", err)
+	}
+
 	fmt.Printf("\n✅ 项目创建成功！\n\n")
 	fmt.Printf("📂 项目目录: %s\n", targetPath)
 	fmt.Printf("\n接下来:\n")

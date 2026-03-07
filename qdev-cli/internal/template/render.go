@@ -84,6 +84,28 @@ func (r *Renderer) Render(content string) string {
 	return result
 }
 
+// CleanUp 删除不需要的文件��目录
+func (r *Renderer) CleanUp(root string) error {
+	// 需要删除的文件和目录
+	toDelete := []string{
+		".github",
+		"qdev-cli",
+		"README.md",
+		"docs",
+	}
+
+	for _, name := range toDelete {
+		path := filepath.Join(root, name)
+		if _, err := os.Stat(path); err == nil {
+			if err := os.RemoveAll(path); err != nil {
+				return fmt.Errorf("删除 %s 失败: %w", path, err)
+			}
+		}
+	}
+
+	return nil
+}
+
 func (r *Renderer) RenameGoMod(root string) error {
 	// 查找 go.mod 文件，可能在根目录或 backend 目录
 	goModPaths := []string{
@@ -115,7 +137,7 @@ func (r *Renderer) RenameGoMod(root string) error {
 
 func shouldIgnore(path string) bool {
 	name := filepath.Base(path)
-	ignored := []string{".git", ".gitignore", "node_modules", "vendor", ".idea", ".vscode", ".claude", "qdev-cli", ".github"}
+	ignored := []string{".git", ".gitignore", "node_modules", "vendor", ".idea", ".vscode", ".claude", "qdev-cli", ".github", "README.md", "LICENSE"}
 	for _, i := range ignored {
 		if name == i {
 			return true
