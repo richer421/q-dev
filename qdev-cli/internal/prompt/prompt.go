@@ -17,7 +17,7 @@ func Run(projectName string) (*config.Config, error) {
 		cfg.ProjectName = projectName
 	}
 
-	// 设置默认值
+	// 计算默认值
 	defaultModule := fmt.Sprintf("github.com/%s/%s", os.Getenv("USER"), cfg.ProjectName)
 	if cfg.ProjectName == "" {
 		defaultModule = fmt.Sprintf("github.com/%s/my-project", os.Getenv("USER"))
@@ -25,15 +25,10 @@ func Run(projectName string) (*config.Config, error) {
 	defaultAuthor := os.Getenv("USER")
 	defaultDesc := "A project created by qdev"
 
-	// 预填充默认值，用户直接回车即可
-	cfg.ModuleName = defaultModule
-	cfg.Author = defaultAuthor
-	cfg.Description = defaultDesc
-
 	// 构建表单
 	var forms []huh.Field
 
-	// 如果项目名称未传入，添加项目名称输入
+	// 项目名称
 	if projectName == "" {
 		forms = append(forms, huh.NewInput().
 			Title("Project Name").
@@ -41,22 +36,34 @@ func Run(projectName string) (*config.Config, error) {
 			Value(&cfg.ProjectName).
 			Validate(func(s string) error {
 				if s == "" {
-					return fmt.Errorf("project name required")
+					return fmt.Errorf("required")
 				}
 				return nil
 			}))
 	}
 
-	// 添加其他字段
+	// Go 模块名（placeholder 显示默认值，Tab 补全）
 	forms = append(forms,
 		huh.NewInput().
 			Title("Go Module").
-			Value(&cfg.ModuleName),
+			Placeholder(defaultModule).
+			Suggestions([]string{defaultModule}).
+			Value(&cfg.ModuleName).
+			Validate(func(s string) error {
+				if s == "" {
+					return fmt.Errorf("required")
+				}
+				return nil
+			}),
 		huh.NewInput().
 			Title("Author").
+			Placeholder(defaultAuthor).
+			Suggestions([]string{defaultAuthor}).
 			Value(&cfg.Author),
 		huh.NewInput().
 			Title("Description").
+			Placeholder(defaultDesc).
+			Suggestions([]string{defaultDesc}).
 			Value(&cfg.Description),
 	)
 
@@ -72,10 +79,15 @@ func Run(projectName string) (*config.Config, error) {
 			Value(&mode),
 	)
 
-	// 自定义按键绑定，支持 Tab 切换选项
+	// 按键绑定
 	keyMap := huh.NewDefaultKeyMap()
-	keyMap.Select.Next.SetKeys("down", "j", "tab", "right", "l")
-	keyMap.Select.Prev.SetKeys("up", "k", "shift+tab", "left", "h")
+	// Input: Tab 补全建议，Enter 下一项
+	keyMap.Input.AcceptSuggestion.SetKeys("tab", "right")
+	keyMap.Input.Next.SetKeys("enter", "down")
+	keyMap.Input.Prev.SetKeys("up", "shift+tab")
+	// Select: Tab/Shift+Tab 切换选项
+	keyMap.Select.Next.SetKeys("down", "j", "tab")
+	keyMap.Select.Prev.SetKeys("up", "k", "shift+tab")
 
 	// 运行表单
 	err := huh.NewForm(
@@ -87,6 +99,17 @@ func Run(projectName string) (*config.Config, error) {
 	}
 
 	cfg.BackendOnly = mode == "backend"
+
+	// 如果用户没有输入，使用默认值
+	if cfg.ModuleName == "" {
+		cfg.ModuleName = defaultModule
+	}
+	if cfg.Author == "" {
+		cfg.Author = defaultAuthor
+	}
+	if cfg.Description == "" {
+		cfg.Description = defaultDesc
+	}
 
 	return cfg, nil
 }
