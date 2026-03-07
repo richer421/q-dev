@@ -17,6 +17,15 @@
 - 创建、查询、更新、删除记录
 - 分页列表查询
 
+### MCP Server
+
+独立 MCP Server，供 Claude 调用：
+
+- `q-dev mcp` — 启动 MCP Server（stdio 模式）
+- 工具：
+  - `call_api` — 调用 API（action: hello_world.list/get/create/update/delete）
+  - `read_logs` — 读取日志文件
+
 <!-- 新增模块在此添加，格式示例：
 
 ### 订单管理
