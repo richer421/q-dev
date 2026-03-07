@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/richer421/qdev-cli/internal/config"
 	"github.com/richer421/qdev-cli/internal/git"
 	"github.com/richer421/qdev-cli/internal/prompt"
 	"github.com/richer421/qdev-cli/internal/template"
@@ -18,6 +19,7 @@ var (
 	initSSHKey   string
 	initForce    bool
 	initBackend  bool
+	initYes      bool
 )
 
 var initCmd = &cobra.Command{
@@ -35,8 +37,9 @@ func init() {
 	initCmd.Flags().StringVar(&initTag, "tag", "", "指定 tag 版本")
 	initCmd.Flags().StringVar(&initGitToken, "git-token", "", "Git HTTPS 认证 token")
 	initCmd.Flags().StringVar(&initSSHKey, "ssh-key", "", "SSH 私钥路径")
-	initCmd.Flags().BoolVar(&initForce, "force", false, "强制覆盖已存在的目录")
+	initCmd.Flags().BoolVarP(&initForce, "force", "f", false, "强制覆盖已存在的目录")
 	initCmd.Flags().BoolVar(&initBackend, "backend-only", false, "纯后端模式")
+	initCmd.Flags().BoolVarP(&initYes, "yes", "y", false, "跳过交互式提示，使用默认值")
 }
 
 func runInit(cmd *cobra.Command, args []string) error {
@@ -51,9 +54,18 @@ func runInit(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	cfg, err := prompt.Run(projectName)
-	if err != nil {
-		return err
+	var cfg *config.Config
+	var err error
+
+	if initYes {
+		// 非交互模式
+		cfg = prompt.RunNonInteractive(projectName)
+	} else {
+		// 交互模式
+		cfg, err = prompt.Run(projectName)
+		if err != nil {
+			return err
+		}
 	}
 
 	if initRepoURL != "" {
