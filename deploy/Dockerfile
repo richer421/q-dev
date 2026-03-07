@@ -1,7 +1,11 @@
 # ---------- 构建阶段 ----------
 FROM golang:1.25-alpine AS builder
 
-RUN apk add --no-cache gcc musl-dev librdkafka-dev pkgconf
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    librdkafka-dev \
+    pkgconf
 
 WORKDIR /src
 COPY backend/go.mod backend/go.sum ./

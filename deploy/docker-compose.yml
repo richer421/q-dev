@@ -1,5 +1,6 @@
 services:
   web:
+    profiles: [deploy]
     build:
       context: ..
       dockerfile: deploy/Dockerfile.frontend
@@ -9,6 +10,7 @@ services:
       - app
 
   app:
+    profiles: [deploy]
     build:
       context: ..
       dockerfile: deploy/Dockerfile
@@ -51,7 +53,7 @@ services:
       - kafka_data:/tmp/kafka-logs
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.115.0
+    image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel/config.yaml"]
     volumes:
       - ./otel-collector.yaml:/etc/otel/config.yaml
@@ -60,14 +62,14 @@ services:
       - "4318:4318"   # OTLP HTTP
 
   jaeger:
-    image: jaegertracing/all-in-one:1.64
+    image: jaegertracing/all-in-one:latest
     environment:
       COLLECTOR_OTLP_ENABLED: true
     ports:
       - "16686:16686" # Jaeger UI
 
   prometheus:
-    image: prom/prometheus:v2.55.0
+    image: prom/prometheus:latest
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
