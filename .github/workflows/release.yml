@@ -61,22 +61,24 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Prepare release assets
+        run: |
+          cp qdev-cli/install.sh dist/install.sh
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            dist/*
-            qdev-cli/install.sh
+          files: dist/*
           generate_release_notes: true
           body: |
             ## 安装
 
             ```bash
             # 一键安装
-            curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
+            curl -fsSL https://github.com/richer421/q-dev/releases/latest/download/install.sh | bash
 
             # 安装此版本
-            curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash -s -- --version ${GITHUB_REF#refs/tags/}
+            curl -fsSL https://github.com/richer421/q-dev/releases/download/${{ github.ref_name }}/install.sh | bash
             ```
 
             ## 手动下载
