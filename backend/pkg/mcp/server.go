@@ -39,8 +39,8 @@ func (s *Server) Run() error {
 func (s *Server) registerTools(server *mcp.Server) {
 	// Tool: call_api
 	type callAPIArgs struct {
-		Action string         `json:"action" jsonschema:"required,description=Action to call: hello_world.list, hello_world.get, hello_world.create, hello_world.update, hello_world.delete"`
-		Params map[string]any `json:"params" jsonschema:"description=Parameters for the action"`
+		Action string         `json:"action" jsonschema:"Action to call: hello_world.list, hello_world.get, hello_world.create, hello_world.update, hello_world.delete"`
+		Params map[string]any `json:"params,omitempty" jsonschema:"Parameters for the action"`
 	}
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "call_api",
@@ -59,7 +59,7 @@ func (s *Server) registerTools(server *mcp.Server) {
 
 	// Tool: read_logs
 	type readLogsArgs struct {
-		Lines int `json:"lines" jsonschema:"description=Number of lines to read (default 100)"`
+		Lines int `json:"lines,omitempty" jsonschema:"Number of lines to read (default 100)"`
 	}
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "read_logs",
