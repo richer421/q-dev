@@ -4,17 +4,35 @@ Q-DEV 项目脚手架工具，用于快速创建基于 [q-dev](https://github.co
 
 ## 安装
 
-### 一键安装 (推荐)
-
 ```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
+# macOS / Linux (推荐)
+curl -fsSL https://github.com/richer421/q-dev/releases/latest/download/install.sh | bash
 
-# 或使用 wget
-wget -qO- https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
+# 或指定版本
+curl -fsSL https://github.com/richer421/q-dev/releases/download/v1.0.0/install.sh | bash
 ```
 
-### 手动下载
+<details>
+<summary>更多选项</summary>
+
+```bash
+# 强制重新安装
+curl -fsSL ... | bash -s -- --force
+
+# 安装到指定目录
+curl -fsSL ... | bash -s -- --dir ~/bin
+
+# 卸载
+curl -fsSL ... | bash -s -- --uninstall
+
+# 查看帮助
+curl -fsSL ... | bash -s -- --help
+```
+
+</details>
+
+<details>
+<summary>手动下载</summary>
 
 从 [Releases](https://github.com/richer421/q-dev/releases) 页面下载对应平台的二进制文件：
 
@@ -26,20 +44,12 @@ wget -qO- https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/instal
 | Linux (ARM64) | `qdev-linux-arm64` |
 | Windows | `qdev-windows-amd64.exe` |
 
-下载后添加执行权限并移到 PATH：
-
 ```bash
 chmod +x qdev-*
 sudo mv qdev-* /usr/local/bin/qdev
 ```
 
-### 从源码构建
-
-```bash
-git clone https://github.com/richer421/q-dev.git
-cd q-dev/qdev-cli
-go build -o qdev .
-```
+</details>
 
 ## 使用
 
