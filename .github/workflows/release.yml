@@ -1,0 +1,63 @@
+name: Release qdev-cli
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          cd qdev-cli
+          BINARY_NAME=qdev
+          if [ "$GOOS" = "windows" ]; then
+            BINARY_NAME=qdev.exe
+          fi
+          go build -ldflags="-s -w" -o dist/${BINARY_NAME}-${GOOS}-${GOARCH} .
+          chmod +x dist/${BINARY_NAME}-${GOOS}-${GOARCH}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qdev-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: qdev-cli/dist/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+          generate_release_notes: true

@@ -4,6 +4,35 @@ Q-DEV 项目脚手架工具，用于快速创建基于 [q-dev](https://github.co
 
 ## 安装
 
+### 一键安装 (推荐)
+
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
+
+# 或使用 wget
+wget -qO- https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
+```
+
+### 手动下载
+
+从 [Releases](https://github.com/richer421/q-dev/releases) 页面下载对应平台的二进制文件：
+
+| 平台 | 文件 |
+|------|------|
+| macOS (Intel) | `qdev-darwin-amd64` |
+| macOS (Apple Silicon) | `qdev-darwin-arm64` |
+| Linux (x64) | `qdev-linux-amd64` |
+| Linux (ARM64) | `qdev-linux-arm64` |
+| Windows | `qdev-windows-amd64.exe` |
+
+下载后添加执行权限并移到 PATH：
+
+```bash
+chmod +x qdev-*
+sudo mv qdev-* /usr/local/bin/qdev
+```
+
 ### 从源码构建
 
 ```bash
@@ -11,10 +40,6 @@ git clone https://github.com/richer421/q-dev.git
 cd q-dev/qdev-cli
 go build -o qdev .
 ```
-
-### 直接下载
-
-从 [Releases](https://github.com/richer421/q-dev/releases) 页面下载对应平台的二进制文件。
 
 ## 使用
 
