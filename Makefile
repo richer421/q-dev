@@ -5,7 +5,7 @@ BINARY := $(BUILD_DIR)/bin/$(APP_NAME)
 # 热加载调试的子命令，默认 server，可通过 make dev CMD=xxx 覆盖
 CMD ?= server
 
-.PHONY: build run dev swagger sql lint test cover docker-build docker-up docker-down clean
+.PHONY: build run dev swagger sql lint test cover fe-install fe-dev fe-build fe-lint infra-up infra-down infra-logs docker-build docker-up docker-down clean
 
 # ---------- 构建 & 运行 ----------
 
@@ -44,16 +44,45 @@ cover:
 	cd $(BUILD_DIR) && go tool cover -html=coverage.out -o coverage.html
 	@echo "Coverage report: $(BUILD_DIR)/coverage.html"
 
-# ---------- Docker ----------
+# ---------- 前端 ----------
+
+fe-install:
+	cd frontend && pnpm install
+
+fe-dev:
+	cd frontend && pnpm dev
+
+fe-build:
+	cd frontend && pnpm build
+
+fe-lint:
+	cd frontend && pnpm lint
+	cd frontend && pnpm format:check
+
+# ---------- 基础设施（本地调试） ----------
+
+COMPOSE := docker compose -f deploy/docker-compose.yml
+
+infra-up:
+	$(COMPOSE) up -d
+
+infra-down:
+	$(COMPOSE) down
+
+infra-logs:
+	$(COMPOSE) logs -f
+
+# ---------- Docker（全栈部署） ----------
 
 docker-build:
 	docker build -t $(APP_NAME) -f deploy/Dockerfile .
+	docker build -t $(APP_NAME)-web -f deploy/Dockerfile.frontend .
 
 docker-up:
-	docker compose -f deploy/docker-compose.yml up -d
+	$(COMPOSE) --profile deploy up -d
 
 docker-down:
-	docker compose -f deploy/docker-compose.yml down
+	$(COMPOSE) --profile deploy down
 
 # ---------- 清理 ----------
 
