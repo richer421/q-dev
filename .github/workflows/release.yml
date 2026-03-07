@@ -26,17 +26,22 @@ jobs:
         with:
           go-version: '1.22'
 
+      - name: Get version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Build
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
           cd qdev-cli
           BINARY_NAME=qdev
           if [ "$GOOS" = "windows" ]; then
             BINARY_NAME=qdev.exe
           fi
-          go build -ldflags="-s -w" -o dist/${BINARY_NAME}-${GOOS}-${GOARCH} .
+          go build -ldflags="-s -w -X github.com/richer421/qdev-cli/cmd.Version=${VERSION} -X github.com/richer421/qdev-cli/cmd.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -o dist/${BINARY_NAME}-${GOOS}-${GOARCH} .
           chmod +x dist/${BINARY_NAME}-${GOOS}-${GOARCH}
 
       - name: Upload artifact
@@ -61,3 +66,23 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
+          body: |
+            ## 安装
+
+            ```bash
+            # 一键安装
+            curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash
+
+            # 安装此版本
+            curl -fsSL https://raw.githubusercontent.com/richer421/q-dev/main/qdev-cli/install.sh | bash -s -- --version ${GITHUB_REF#refs/tags/}
+            ```
+
+            ## 手动下载
+
+            | 平台 | 文件 |
+            |------|------|
+            | macOS (Intel) | `qdev-darwin-amd64` |
+            | macOS (Apple Silicon) | `qdev-darwin-arm64` |
+            | Linux (x64) | `qdev-linux-amd64` |
+            | Linux (ARM64) | `qdev-linux-arm64` |
+            | Windows | `qdev-windows-amd64.exe` |
