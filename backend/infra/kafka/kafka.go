@@ -58,7 +58,7 @@ func Produce(topic string, key, value []byte) error {
 }
 
 func ProduceWithContext(ctx context.Context, topic string, key, value []byte) error {
-	ctx, span := tracer.Start(ctx, topic+" publish",
+	_, span := tracer.Start(ctx, topic+" publish",
 		trace.WithSpanKind(trace.SpanKindProducer),
 		trace.WithAttributes(
 			semconv.MessagingSystemKafka,
