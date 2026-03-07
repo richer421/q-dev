@@ -65,6 +65,20 @@ COMPOSE := docker compose -f deploy/docker-compose.yml
 
 infra-up:
 	$(COMPOSE) up -d
+	@echo ""
+	@echo "✅ 基础设施启动完成！"
+	@echo ""
+	@echo "📌 服务地址:"
+	@echo "   MySQL:      localhost:3306"
+	@echo "   Redis:      localhost:6379"
+	@echo "   Kafka:      localhost:9092"
+	@echo "   Jaeger:     http://localhost:16686"
+	@echo "   Prometheus: http://localhost:9090"
+	@echo ""
+	@echo "🚀 本地开发请另开终端运行:"
+	@echo "   make dev      # 后端 (http://localhost:8080)"
+	@echo "   make fe-dev   # 前端 (http://localhost:8000)"
+	@echo ""
 
 infra-down:
 	$(COMPOSE) down
@@ -80,6 +94,19 @@ docker-build:
 
 docker-up:
 	$(COMPOSE) --profile deploy up -d
+	@echo ""
+	@echo "✅ 全栈服务启动完成！"
+	@echo ""
+	@echo "📌 访问地址:"
+	@echo "   前端:       http://localhost"
+	@echo "   后端 API:   http://localhost:8080"
+	@echo "   Jaeger:     http://localhost:16686"
+	@echo "   Prometheus: http://localhost:9090"
+	@echo ""
+	@echo "🔍 健康检查:"
+	@echo "   curl http://localhost:8080/healthz"
+	@echo "   curl http://localhost:8080/readyz"
+	@echo ""
 
 docker-down:
 	$(COMPOSE) --profile deploy down

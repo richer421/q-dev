@@ -283,9 +283,8 @@ func stopConsumers() {
 	}
 	wg.Wait()
 	for _, c := range consumers {
-		err := c.Close()
-		if err != nil {
-			return
+		if err := c.Close(); err != nil {
+			logger.Errorf("kafka consumer close failed: %s", err)
 		}
 	}
 	consumers = nil
