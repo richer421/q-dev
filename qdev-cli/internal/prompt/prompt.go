@@ -53,7 +53,7 @@ func Run(projectName string) (*config.Config, error) {
 				return nil
 			}),
 		huh.NewInput().
-			Title("作者").
+			Title("作��").
 			Placeholder(os.Getenv("USER")).
 			Value(&cfg.Author),
 		huh.NewInput().
@@ -74,10 +74,15 @@ func Run(projectName string) (*config.Config, error) {
 			Value(&mode),
 	)
 
+	// 自定义按键绑定，支持 Tab 切换选项
+	keyMap := huh.NewDefaultKeyMap()
+	keyMap.Select.Down.SetKeys("down", "j", "tab")
+	keyMap.Select.Up.SetKeys("up", "k", "shift+tab")
+
 	// 运行表单
 	err := huh.NewForm(
 		huh.NewGroup(forms...),
-	).Run()
+	).WithKeyMap(keyMap).Run()
 
 	if err != nil {
 		return nil, err
