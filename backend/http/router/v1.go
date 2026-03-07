@@ -6,15 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterV1(api *gin.RouterGroup) {
-	v1 := api.Group("/v1")
+func RegisterV1(apiGroup *gin.RouterGroup) {
+	v1 := apiGroup.Group("/v1")
 
 	registerHelloWorld(v1)
 }
 
 func registerHelloWorld(rg *gin.RouterGroup) {
-	h := &api.HelloWorldAPI{}
+	h := api.NewHelloWorldAPI()
 	g := rg.Group("/hello-world")
 	g.GET("", h.List)
 	g.GET("/:id", h.Get)
+	g.POST("", h.Create)
+	g.PUT("/:id", h.Update)
+	g.DELETE("/:id", h.Delete)
 }

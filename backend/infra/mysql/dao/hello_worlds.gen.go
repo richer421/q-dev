@@ -27,6 +27,11 @@ func newHelloWorld(db *gorm.DB, opts ...gen.DOOption) helloWorld {
 
 	tableName := _helloWorld.helloWorldDo.TableName()
 	_helloWorld.ALL = field.NewAsterisk(tableName)
+	_helloWorld.ID = field.NewUint(tableName, "id")
+	_helloWorld.CreatedAt = field.NewTime(tableName, "created_at")
+	_helloWorld.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_helloWorld.Title = field.NewString(tableName, "title")
+	_helloWorld.Description = field.NewString(tableName, "description")
 
 	_helloWorld.fillFieldMap()
 
@@ -36,7 +41,12 @@ func newHelloWorld(db *gorm.DB, opts ...gen.DOOption) helloWorld {
 type helloWorld struct {
 	helloWorldDo helloWorldDo
 
-	ALL field.Asterisk
+	ALL         field.Asterisk
+	ID          field.Uint
+	CreatedAt   field.Time
+	UpdatedAt   field.Time
+	Title       field.String
+	Description field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -53,6 +63,11 @@ func (h helloWorld) As(alias string) *helloWorld {
 
 func (h *helloWorld) updateTableName(table string) *helloWorld {
 	h.ALL = field.NewAsterisk(table)
+	h.ID = field.NewUint(table, "id")
+	h.CreatedAt = field.NewTime(table, "created_at")
+	h.UpdatedAt = field.NewTime(table, "updated_at")
+	h.Title = field.NewString(table, "title")
+	h.Description = field.NewString(table, "description")
 
 	h.fillFieldMap()
 
@@ -79,7 +94,12 @@ func (h *helloWorld) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (h *helloWorld) fillFieldMap() {
-	h.fieldMap = make(map[string]field.Expr, 0)
+	h.fieldMap = make(map[string]field.Expr, 5)
+	h.fieldMap["id"] = h.ID
+	h.fieldMap["created_at"] = h.CreatedAt
+	h.fieldMap["updated_at"] = h.UpdatedAt
+	h.fieldMap["title"] = h.Title
+	h.fieldMap["description"] = h.Description
 }
 
 func (h helloWorld) clone(db *gorm.DB) helloWorld {
