@@ -5,7 +5,25 @@ BINARY := $(BUILD_DIR)/bin/$(APP_NAME)
 # 热加载调试的子命令，默认 server，可通过 make dev CMD=xxx 覆盖
 CMD ?= server
 
-.PHONY: build run dev swagger sql lint test cover fe-install fe-dev fe-build fe-lint infra-up infra-down infra-logs docker-build docker-up docker-down clean
+.PHONY: init build run dev swagger sql lint test cover fe-install fe-dev fe-build fe-lint infra-up infra-down infra-logs docker-build docker-up docker-down clean
+
+# ---------- 初始化 ----------
+
+init:
+	@echo "📦 安装后端工具..."
+	cd $(BUILD_DIR) && go install github.com/air-verse/air@latest
+	cd $(BUILD_DIR) && go install github.com/swaggo/swag/cmd/swag@latest
+	cd $(BUILD_DIR) && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@echo "📦 安装前端依赖..."
+	cd frontend && pnpm install
+	@echo ""
+	@echo "✅ 初始化完成！"
+	@echo ""
+	@echo "接下来:"
+	@echo "  make infra-up   # 启动基础设施"
+	@echo "  make dev       # 启动后端 (http://localhost:8080)"
+	@echo "  make fe-dev    # 启动前端 (http://localhost:8000)"
+	@echo ""
 
 # ---------- 构建 & 运行 ----------
 
