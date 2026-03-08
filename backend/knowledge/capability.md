@@ -21,7 +21,7 @@
 
 独立 MCP Server，供 Claude 调用：
 
-- `q-dev mcp` — 启动 MCP Server（stdio 模式）
+- `{{ .ProjectName }} mcp` — 启动 MCP Server（stdio 模式）
 - 工具：
   - `call_api` — 调用 API（action: hello_world.list/get/create/update/delete）
   - `read_logs` — 读取日志文件

@@ -12,8 +12,8 @@ import (
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "q-dev",
-	Short: "Q-Dev 后端服务",
+	Use:   "{{ .ProjectName }}",
+	Short: "{{ .ProjectName }} 后端服务",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := conf.Load(cfgFile); err != nil {
 			return err

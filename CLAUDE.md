@@ -1,12 +1,10 @@
-# Q-DEV
+# {{ .ProjectName }}
 
-AI 驱动的全栈开发脚手架。为 AI 时代的工程实践而生——让 AI 理解你的架构，让开发回归本质。
-
-Q-DEV 不是又一个 CRUD 模板，而是一套面向 AI 协作开发的工程基座。清晰的分层约束让 AI 精准生成代码，规范的目录契约让人机协作零摩擦。
+{{ .Description }}
 
 ## 技术栈
 
-- **后端**: Go 1.25 + Gin + GORM Gen + Cobra（模块名: `q-dev`）
+- **后端**: Go 1.25 + Gin + GORM Gen + Cobra（模块名: `{{ .ModuleName }}`）
 - **前端**: React + Umi Max + Ant Design Pro
 - **基础设施**: MySQL 8.0 / Redis 7 / Kafka 3.7
 - **可观测性**: OpenTelemetry + Jaeger + Prometheus

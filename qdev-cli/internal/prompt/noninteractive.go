@@ -13,6 +13,7 @@ func RunNonInteractive(projectName string) *config.Config {
 
 	cfg.ProjectName = projectName
 	cfg.ModuleName = fmt.Sprintf("github.com/%s/%s", os.Getenv("USER"), projectName)
+	cfg.DbName = config.GenerateDbName(projectName)
 	cfg.Author = os.Getenv("USER")
 	cfg.Description = "A project created by qdev"
 	cfg.BackendOnly = false

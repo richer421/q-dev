@@ -66,11 +66,13 @@ func (r *Renderer) Render(content string) string {
 	replacements := map[string]string{
 		`{{\.ProjectName}}`:  r.data.ProjectName,
 		`{{\.ModuleName}}`:   r.data.ModuleName,
+		`{{\.DbName}}`:       r.data.DbName,
 		`{{\.Author}}`:       r.data.Author,
 		`{{\.Description}}`:  r.data.Description,
 		`{{\.Year}}`:         fmt.Sprintf("%d", r.data.Year),
 		`{{ .ProjectName }}`: r.data.ProjectName,
 		`{{ .ModuleName }}`:  r.data.ModuleName,
+		`{{ .DbName }}`:      r.data.DbName,
 		`{{ .Author }}`:      r.data.Author,
 		`{{ .Description }}`: r.data.Description,
 		`{{ .Year }}`:        fmt.Sprintf("%d", r.data.Year),
@@ -79,6 +81,15 @@ func (r *Renderer) Render(content string) string {
 	for pattern, value := range replacements {
 		re := regexp.MustCompile(regexp.QuoteMeta(pattern))
 		result = re.ReplaceAllString(result, value)
+	}
+
+	// 全局替换：将模板项目的模块名 q-dev 替换为用户的模块名
+	// 这会更新所有的 Go import 路径
+	if r.data.ModuleName != "q-dev" {
+		// 替换 import 语句中的模块路径
+		result = regexp.MustCompile(`q-dev(/|")`).ReplaceAllString(result, r.data.ModuleName+"$1")
+		// 替换 .gitignore 中的二进制名
+		result = regexp.MustCompile(`(?m)^q-dev$`).ReplaceAllString(result, r.data.ProjectName)
 	}
 
 	return result

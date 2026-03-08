@@ -4,7 +4,7 @@ import { notification } from 'antd';
 // 运行时配置
 export const layout = () => {
   return {
-    title: 'Q-DEV',
+    title: '{{ .ProjectName }}',
     menu: {
       locale: false,
     },

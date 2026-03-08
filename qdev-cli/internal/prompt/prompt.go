@@ -108,6 +108,9 @@ func Run(projectName string) (*config.Config, error) {
 		cfg.Description = defaultDesc
 	}
 
+	// 生成数据库名（将 - 转换为 _）
+	cfg.DbName = config.GenerateDbName(cfg.ProjectName)
+
 	return cfg, nil
 }
 

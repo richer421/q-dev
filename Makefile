@@ -1,4 +1,4 @@
-APP_NAME := q-dev
+APP_NAME := {{ .ProjectName }}
 BUILD_DIR := backend
 BINARY := $(BUILD_DIR)/bin/$(APP_NAME)
 

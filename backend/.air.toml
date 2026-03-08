@@ -5,9 +5,9 @@
 
 [build]
   # 工作目录
-  cmd = "go build -o ./bin/q-dev ."
+  cmd = "go build -o ./bin/{{ .ProjectName }} ."
   # 运行参数通过命令行 `air -- <args>` 传入
-  entrypoint = "./bin/q-dev"
+  entrypoint = "./bin/{{ .ProjectName }}"
   # 监听以下文件扩展名的变动
   include_ext = ["go", "yaml", "yml", "toml", "json"]
   # 排除不影响程序行为的目录

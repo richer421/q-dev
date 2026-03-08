@@ -41,7 +41,7 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: q_dev
+      MYSQL_DATABASE: {{ .DbName }}
     ports:
       - "3306:3306"
     volumes:

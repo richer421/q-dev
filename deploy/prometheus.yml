@@ -8,6 +8,6 @@ scrape_configs:
       - targets: ["otel-collector:8889"]
 
   # 直接从应用 /metrics 端点采集
-  - job_name: q-dev
+  - job_name: {{ .ProjectName }}
     static_configs:
       - targets: ["host.docker.internal:8080"]

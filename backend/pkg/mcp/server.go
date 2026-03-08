@@ -27,7 +27,7 @@ func NewServer() *Server {
 
 func (s *Server) Run() error {
 	server := mcp.NewServer(&mcp.Implementation{
-		Name:    "q-dev",
+		Name:    "{{ .ProjectName }}",
 		Version: "1.0.0",
 	}, nil)
 
@@ -44,7 +44,7 @@ func (s *Server) registerTools(server *mcp.Server) {
 	}
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "call_api",
-		Description: "Call Q-DEV API directly",
+		Description: "Call {{ .ProjectName }} API directly",
 	}, func(ctx context.Context, req *mcp.CallToolRequest, args callAPIArgs) (*mcp.CallToolResult, any, error) {
 		result, err := s.handleCallAPI(ctx, args.Action, args.Params)
 		if err != nil {

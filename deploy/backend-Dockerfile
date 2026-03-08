@@ -12,7 +12,7 @@ COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 COPY backend/ .
-RUN CGO_ENABLED=1 go build -tags musl -o /app/q-dev .
+RUN CGO_ENABLED=1 go build -tags musl -o /app/{{ .ProjectName }} .
 
 # ---------- 运行阶段 ----------
 FROM alpine:3.21
@@ -20,10 +20,10 @@ FROM alpine:3.21
 RUN apk add --no-cache ca-certificates tzdata librdkafka
 
 WORKDIR /app
-COPY --from=builder /app/q-dev .
+COPY --from=builder /app/{{ .ProjectName }} .
 COPY backend/conf/config.yaml ./conf/config.yaml
 
 EXPOSE 8080
 
-ENTRYPOINT ["./q-dev"]
+ENTRYPOINT ["./{{ .ProjectName }}"]
 CMD ["server"]

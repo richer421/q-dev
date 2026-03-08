@@ -1,1 +1,1 @@
-export const DEFAULT_NAME = 'Q-DEV';
+export const DEFAULT_NAME = '{{ .ProjectName }}';

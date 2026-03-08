@@ -1,6 +1,6 @@
 app:
-  name: q-dev
-  description: "AI 全栈开发脚手架"
+  name: {{ .ProjectName }}
+  description: "{{ .Description }}"
 
 
 server:
@@ -11,7 +11,7 @@ mysql:
   port: 3306
   user: "root"
   password: "root"
-  database: "q_dev"
+  database: "{{ .DbName }}"
   max_open_conns: 100
   max_idle_conns: 10
   max_lifetime: 3600
@@ -29,7 +29,7 @@ kafka:
 
 otel:
   enabled: false
-  service_name: "q-dev"
+  service_name: "{{ .ProjectName }}"
   endpoint: "localhost:4317"
   prometheus:
     enabled: true
