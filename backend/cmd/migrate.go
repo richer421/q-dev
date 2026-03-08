@@ -13,19 +13,20 @@ import (
 
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
-	Short: "Migrate database schema",
+	Short: "Run database migrations",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := mysql.Init(conf.C.MySQL); err != nil {
 			fmt.Fprintf(os.Stderr, "mysql init failed: %v\n", err)
 			os.Exit(1)
 		}
+		defer mysql.Close()
 
-		logger.Infof("Running database migration...")
+		logger.Info("Running migration...")
 		if err := mysql.Migrate(); err != nil {
 			fmt.Fprintf(os.Stderr, "migration failed: %v\n", err)
 			os.Exit(1)
 		}
-		logger.Infof("Migration completed successfully")
+		logger.Info("Migration completed!")
 	},
 }
 

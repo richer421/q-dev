@@ -5,7 +5,7 @@ BINARY := $(BUILD_DIR)/bin/$(APP_NAME)
 # 热加载调试的子命令，默认 server，可通过 make dev CMD=xxx 覆盖
 CMD ?= server
 
-.PHONY: init build run dev swagger sql lint test cover fe-install fe-dev fe-build fe-lint infra-up infra-down infra-logs docker-build docker-up docker-down clean
+.PHONY: init build run dev swagger sql lint test cover fe-install fe-dev fe-build fe-lint infra-up infra-down infra-logs migrate docker-build docker-up docker-down clean
 
 # ---------- 初始化 ----------
 
@@ -80,6 +80,10 @@ fe-lint:
 # ---------- 基础设施（本地调试） ----------
 
 COMPOSE := docker compose -f deploy/docker-compose.yml
+
+migrate:
+	@echo "🔄 执行数据库迁移..."
+	cd $(BUILD_DIR) && go run . migrate
 
 infra-up:
 	$(COMPOSE) up -d

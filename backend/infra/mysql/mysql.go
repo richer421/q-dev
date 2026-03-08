@@ -26,25 +26,20 @@ func Init(cfg conf.MySQLConfig) error {
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
 	sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
 
-	// OTel instrumentation
 	if err := DB.Use(otelgorm.NewPlugin()); err != nil {
 		return err
 	}
 
-	// 初始化 GORM Gen 查询
 	dao.SetDefault(DB)
-
 	return nil
 }
 
-// Migrate 自动迁移数据库表结构
 func Migrate() error {
 	if DB == nil {
 		return gorm.ErrInvalidDB
 	}
 	return DB.AutoMigrate(
 		&model.HelloWorld{},
-		// 新增模型时在此添加
 	)
 }
 
