@@ -44,10 +44,10 @@ func Run(projectName string) (*config.Config, error) {
 
 	// Go 模块名（placeholder 显示默认值，Tab 补全）
 	forms = append(forms,
-		huh.NewInput().
+		NewAutoFillInput().
 			Title("Go Module").
 			Placeholder(defaultModule).
-			Suggestions([]string{defaultModule}).
+			Suggestion(defaultModule).
 			Value(&cfg.ModuleName).
 			Validate(func(s string) error {
 				if s == "" {
@@ -55,15 +55,15 @@ func Run(projectName string) (*config.Config, error) {
 				}
 				return nil
 			}),
-		huh.NewInput().
+		NewAutoFillInput().
 			Title("Author").
 			Placeholder(defaultAuthor).
-			Suggestions([]string{defaultAuthor}).
+			Suggestion(defaultAuthor).
 			Value(&cfg.Author),
-		huh.NewInput().
+		NewAutoFillInput().
 			Title("Description").
 			Placeholder(defaultDesc).
-			Suggestions([]string{defaultDesc}).
+			Suggestion(defaultDesc).
 			Value(&cfg.Description),
 	)
 
@@ -79,14 +79,11 @@ func Run(projectName string) (*config.Config, error) {
 			Value(&mode),
 	)
 
-	// 按键绑定
+	// 设置自定义 KeyMap - 把 tab 从 Input.Next 中移除
 	keyMap := huh.NewDefaultKeyMap()
-	// Input: Tab 补全建议，Enter 下一项
-	keyMap.Input.AcceptSuggestion.SetKeys("tab", "right")
-	keyMap.Input.Next.SetKeys("enter", "down")
+	keyMap.Input.Next.SetKeys("enter", "down")  // tab 不��用于 Next
 	keyMap.Input.Prev.SetKeys("up", "shift+tab")
-	// Select: Tab/Shift+Tab 切换选项
-	keyMap.Select.Next.SetKeys("down", "j", "tab")
+	keyMap.Select.Next.SetKeys("down", "j")
 	keyMap.Select.Prev.SetKeys("up", "k", "shift+tab")
 
 	// 运行表单
