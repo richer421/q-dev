@@ -12,7 +12,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// AutoFillInput 是一个支持在空输入时按 Tab 键自动填充的输入字段
+// AutoFillInput is an input field that supports auto-filling suggestions on Tab
 type AutoFillInput struct {
 	accessor    huh.Accessor[string]
 	key         string
@@ -30,11 +30,11 @@ type AutoFillInput struct {
 	position    huh.FieldPosition
 	keymap      huh.InputKeyMap
 
-	// 内部 textinput
+	// internal textinput
 	ti textinput.Model
 }
 
-// NewAutoFillInput 创建一个新的 AutoFillInput
+// NewAutoFillInput creates a new AutoFillInput
 func NewAutoFillInput() *AutoFillInput {
 	ti := textinput.New()
 	ti.KeyMap.AcceptSuggestion = key.NewBinding(key.WithKeys("tab", "right"))
@@ -53,7 +53,7 @@ func nextID() int {
 	return _idCounter
 }
 
-// Suggestion 设置单个建议值（用于 Tab 自动填充）
+// Suggestion sets a single suggestion for Tab auto-fill
 func (i *AutoFillInput) Suggestion(s string) *AutoFillInput {
 	i.suggestion = s
 	i.ti.ShowSuggestions = true
@@ -62,7 +62,7 @@ func (i *AutoFillInput) Suggestion(s string) *AutoFillInput {
 	return i
 }
 
-// Suggestions 设置建议列表（兼容 huh 接口）
+// Suggestions sets suggestions list (compatible with huh interface)
 func (i *AutoFillInput) Suggestions(suggestions []string) *AutoFillInput {
 	if len(suggestions) > 0 {
 		i.Suggestion(suggestions[0])
@@ -70,62 +70,62 @@ func (i *AutoFillInput) Suggestions(suggestions []string) *AutoFillInput {
 	return i
 }
 
-// Value 设置值指针
+// Value sets value pointer
 func (i *AutoFillInput) Value(value *string) *AutoFillInput {
 	i.accessor = huh.NewPointerAccessor(value)
 	i.ti.SetValue(i.accessor.Get())
 	return i
 }
 
-// Title 设置标题
+// Title sets title
 func (i *AutoFillInput) Title(title string) *AutoFillInput {
 	i.title = title
 	return i
 }
 
-// Description 设置描述
+// Description sets description
 func (i *AutoFillInput) Description(desc string) *AutoFillInput {
 	i.desc = desc
 	return i
 }
 
-// Placeholder 设置占位符
+// Placeholder sets placeholder
 func (i *AutoFillInput) Placeholder(placeholder string) *AutoFillInput {
 	i.placeholder = placeholder
 	i.ti.Placeholder = placeholder
 	return i
 }
 
-// Validate 设置验证函数
+// Validate sets validation function
 func (i *AutoFillInput) Validate(validate func(string) error) *AutoFillInput {
 	i.validate = validate
 	return i
 }
 
-// Inline 设置内联模式
+// Inline sets inline mode
 func (i *AutoFillInput) Inline(inline bool) *AutoFillInput {
 	return i
 }
 
-// Key 设置键
+// Key sets key
 func (i *AutoFillInput) Key(key string) *AutoFillInput {
 	i.key = key
 	return i
 }
 
-// CharLimit 设置字符限制
+// CharLimit sets char limit
 func (i *AutoFillInput) CharLimit(limit int) *AutoFillInput {
 	i.ti.CharLimit = limit
 	return i
 }
 
-// EchoMode 设置回显模式
+// EchoMode sets echo mode
 func (i *AutoFillInput) EchoMode(mode huh.EchoMode) *AutoFillInput {
 	i.ti.EchoMode = textinput.EchoMode(mode)
 	return i
 }
 
-// Password 设置密码模式
+// Password sets password mode
 func (i *AutoFillInput) Password(password bool) *AutoFillInput {
 	if password {
 		i.ti.EchoMode = textinput.EchoPassword
@@ -135,19 +135,19 @@ func (i *AutoFillInput) Password(password bool) *AutoFillInput {
 	return i
 }
 
-// Prompt 设置提示符
+// Prompt sets prompt
 func (i *AutoFillInput) Prompt(prompt string) *AutoFillInput {
 	i.ti.Prompt = prompt
 	return i
 }
 
-// Focus 聚焦
+// Focus focuses the field
 func (i *AutoFillInput) Focus() tea.Cmd {
 	i.focused = true
 	return i.ti.Focus()
 }
 
-// Blur 失焦
+// Blur blurs the field
 func (i *AutoFillInput) Blur() tea.Cmd {
 	i.focused = false
 	i.accessor.Set(i.ti.Value())
@@ -156,7 +156,7 @@ func (i *AutoFillInput) Blur() tea.Cmd {
 	return nil
 }
 
-// KeyBinds 返回键绑定帮助信息
+// KeyBinds returns key binding help info
 func (i *AutoFillInput) KeyBinds() []key.Binding {
 	if i.ti.ShowSuggestions {
 		return []key.Binding{i.keymap.AcceptSuggestion, i.keymap.Prev, i.keymap.Submit, i.keymap.Next}
@@ -164,39 +164,38 @@ func (i *AutoFillInput) KeyBinds() []key.Binding {
 	return []key.Binding{i.keymap.Prev, i.keymap.Submit, i.keymap.Next}
 }
 
-// Skip 是否跳过
+// Skip returns whether to skip
 func (i *AutoFillInput) Skip() bool {
 	return false
 }
 
-// Zoom 是否缩放
+// Zoom returns whether to zoom
 func (i *AutoFillInput) Zoom() bool {
 	return false
 }
 
-// GetKey 获取键
+// GetKey returns the key
 func (i *AutoFillInput) GetKey() string {
 	return i.key
 }
 
-// GetValue 获取值
+// GetValue returns the value
 func (i *AutoFillInput) GetValue() any {
 	return i.accessor.Get()
 }
 
-// Error 返回错误
+// Error returns error
 func (i *AutoFillInput) Error() error {
 	return i.err
 }
 
-// Run 运行字段
+// Run runs the field
 func (i *AutoFillInput) Run() error {
 	return huh.Run(i)
 }
 
-// RunAccessible 以可访问模式运行
+// RunAccessible runs in accessible mode
 func (i *AutoFillInput) RunAccessible(w io.Writer, r io.Reader) error {
-	// 简化实现 - 直接设置默认值
 	if i.suggestion != "" && i.accessor.Get() == "" {
 		i.accessor.Set(i.suggestion)
 		fmt.Fprintf(w, "%s: %s\n", i.title, i.suggestion)
@@ -205,13 +204,13 @@ func (i *AutoFillInput) RunAccessible(w io.Writer, r io.Reader) error {
 	return nil
 }
 
-// Init 初始化
+// Init initializes
 func (i *AutoFillInput) Init() tea.Cmd {
 	i.ti.Blur()
 	return nil
 }
 
-// Update 更新
+// Update handles updates
 func (i *AutoFillInput) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
@@ -219,14 +218,15 @@ func (i *AutoFillInput) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		i.err = nil
 
-		// 处理 Tab 键 - 在输入为空时自动填充建议（不跳转)
+		// Handle Tab key - auto-fill suggestion when input is empty (don't jump)
 		if msg.String() == "tab" {
 			currentValue := i.ti.Value()
 			if currentValue == "" && i.suggestion != "" {
-				// 自动填充建议
+				// Auto-fill suggestion
 				i.ti.SetValue(i.suggestion)
 				i.accessor.Set(i.suggestion)
-				// 不跳转，让用户继续编辑或 return i, nil
+				// Don't jump, let user continue editing
+				return i, nil
 			}
 		}
 
@@ -243,30 +243,31 @@ func (i *AutoFillInput) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// 更新 textinput
+	// Update textinput
 	var cmd tea.Cmd
 	i.ti, cmd = i.ti.Update(msg)
 	cmds = append(cmds, cmd)
 
-	// 同步值到 accessor
+	// Sync value to accessor
 	i.accessor.Set(i.ti.Value())
 
 	return i, tea.Batch(cmds...)
 }
 
-// View 渲染
+
+// View renders the field
 func (i *AutoFillInput) View() string {
 	styles := i.activeStyles()
 	maxWidth := i.width - styles.Base.GetHorizontalFrameSize()
 
-	// 设置 textinput 样式
+	// Set textinput styles
 	i.ti.PlaceholderStyle = styles.TextInput.Placeholder
 	i.ti.PromptStyle = styles.TextInput.Prompt
 	i.ti.Cursor.Style = styles.TextInput.Cursor
 	i.ti.Cursor.TextStyle = styles.TextInput.CursorText
 	i.ti.TextStyle = styles.TextInput.Text
 
-	// 调整宽度
+	// Adjust width
 	if i.ti.CharLimit > 0 {
 		i.ti.Width = max3(min2(i.ti.CharLimit, i.ti.Width), maxWidth, 0)
 	}
@@ -291,7 +292,8 @@ func (i *AutoFillInput) View() string {
 		Render(sb.String())
 }
 
-// wrap 简单的文本换行
+
+// wrap wraps text
 func wrap(text string, width int) string {
 	if width <= 0 {
 		return text
@@ -319,7 +321,7 @@ func min2(a, b int) int {
 	return b
 }
 
-// activeStyles 获取当前样式
+// activeStyles returns active styles
 func (i *AutoFillInput) activeStyles() *huh.FieldStyles {
 	theme := i.theme
 	if theme == nil {
@@ -331,14 +333,14 @@ func (i *AutoFillInput) activeStyles() *huh.FieldStyles {
 	return &theme.Blurred
 }
 
-// WithKeyMap 设置键映射
+// WithKeyMap sets keymap
 func (i *AutoFillInput) WithKeyMap(k *huh.KeyMap) huh.Field {
 	i.keymap = k.Input
 	i.ti.KeyMap.AcceptSuggestion = i.keymap.AcceptSuggestion
 	return i
 }
 
-// WithTheme 设置主题
+// WithTheme sets theme
 func (i *AutoFillInput) WithTheme(theme *huh.Theme) huh.Field {
 	if i.theme != nil {
 		return i
@@ -347,7 +349,7 @@ func (i *AutoFillInput) WithTheme(theme *huh.Theme) huh.Field {
 	return i
 }
 
-// WithWidth 设置宽度
+// WithWidth sets width
 func (i *AutoFillInput) WithWidth(width int) huh.Field {
 	i.width = width
 	frameSize := i.activeStyles().Base.GetHorizontalFrameSize()
@@ -356,13 +358,13 @@ func (i *AutoFillInput) WithWidth(width int) huh.Field {
 	return i
 }
 
-// WithHeight 设置高度
+// WithHeight sets height
 func (i *AutoFillInput) WithHeight(height int) huh.Field {
 	i.height = height
 	return i
 }
 
-// WithPosition 设置位置
+// WithPosition sets position
 func (i *AutoFillInput) WithPosition(p huh.FieldPosition) huh.Field {
 	i.position = p
 	i.keymap.Prev.SetEnabled(!p.IsFirst())
@@ -371,12 +373,12 @@ func (i *AutoFillInput) WithPosition(p huh.FieldPosition) huh.Field {
 	return i
 }
 
-// WithAccessible 设置可访问模式
+// WithAccessible sets accessible mode
 func (i *AutoFillInput) WithAccessible(accessible bool) huh.Field {
 	return i
 }
 
-// Accessor 设置 accessor
+// Accessor sets accessor
 func (i *AutoFillInput) Accessor(accessor huh.Accessor[string]) *AutoFillInput {
 	i.accessor = accessor
 	i.ti.SetValue(i.accessor.Get())
