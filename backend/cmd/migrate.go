@@ -17,11 +17,11 @@ var migrateCmd = &cobra.Command{
 		}
 		defer mysql.Close()
 
-		logger.Info("Running migration...")
+		logger.Infof("Running migration...")
 		if err := mysql.Migrate(); err != nil {
 			logger.Fatalf("migration failed: %v", err)
 		}
-		logger.Info("Migration completed!")
+		logger.Infof("Migration completed!")
 	},
 }
 

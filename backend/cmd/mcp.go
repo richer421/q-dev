@@ -18,7 +18,7 @@ var mcpCmd = &cobra.Command{
 			logger.Fatalf("mysql init failed: %v", err)
 		}
 
-		logger.Info("Starting MCP server...")
+		logger.Infof("Starting MCP server...")
 		srv := mcp.NewServer()
 		if err := srv.Run(); err != nil {
 			logger.Fatalf("MCP server error: %v", err)

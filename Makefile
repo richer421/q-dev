@@ -88,6 +88,14 @@ migrate:
 infra-up:
 	$(COMPOSE) up -d
 	@echo ""
+	@echo "⏳ 等待 MySQL 就绪..."
+	@for i in $$(seq 30); do \
+		docker exec $$(docker ps -qf "name=mysql" 2>/dev/null) mysqladmin ping -h localhost -uroot -proot 2>/dev/null && break; \
+		sleep 1; \
+	done
+	@echo "🔄 执行数据库迁移..."
+	cd $(BUILD_DIR) && go run . migrate
+	@echo ""
 	@echo "✅ 基础设施启动完成！"
 	@echo ""
 	@echo "📌 服务地址:"
