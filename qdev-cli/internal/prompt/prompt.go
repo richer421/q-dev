@@ -42,6 +42,9 @@ func Run(projectName string) (*config.Config, error) {
 			}))
 	}
 
+	// 计算默认数据库名
+	defaultDbName := config.GenerateDbName(cfg.ProjectName)
+
 	// Go 模块名（placeholder 显示默认值，Tab 补全）
 	forms = append(forms,
 		NewAutoFillInput().
@@ -55,6 +58,11 @@ func Run(projectName string) (*config.Config, error) {
 				}
 				return nil
 			}),
+		NewAutoFillInput().
+			Title("Database Name").
+			Placeholder(defaultDbName).
+			Suggestion(defaultDbName).
+			Value(&cfg.DbName),
 		NewAutoFillInput().
 			Title("Author").
 			Placeholder(defaultAuthor).
@@ -101,15 +109,15 @@ func Run(projectName string) (*config.Config, error) {
 	if cfg.ModuleName == "" {
 		cfg.ModuleName = defaultModule
 	}
+	if cfg.DbName == "" {
+		cfg.DbName = defaultDbName
+	}
 	if cfg.Author == "" {
 		cfg.Author = defaultAuthor
 	}
 	if cfg.Description == "" {
 		cfg.Description = defaultDesc
 	}
-
-	// 生成数据库名（将 - 转换为 _）
-	cfg.DbName = config.GenerateDbName(cfg.ProjectName)
 
 	return cfg, nil
 }
@@ -149,6 +157,11 @@ func CheckTargetDir(path string, force bool) error {
 		}
 		if len(entries) > 0 {
 			return fmt.Errorf("directory %s is not empty, use --force to overwrite", path)
+		}
+	} else {
+		// force 模式下删除已存在的目录
+		if err := os.RemoveAll(path); err != nil {
+			return fmt.Errorf("failed to remove existing directory: %w", err)
 		}
 	}
 	return nil

@@ -18,6 +18,7 @@ var (
 	initTag      string
 	initGitToken string
 	initSSHKey   string
+	initDbName   string
 	initForce    bool
 	initBackend  bool
 	initYes      bool
@@ -38,6 +39,7 @@ func init() {
 	initCmd.Flags().StringVar(&initTag, "tag", "", "指定 tag 版本")
 	initCmd.Flags().StringVar(&initGitToken, "git-token", "", "Git HTTPS 认证 token")
 	initCmd.Flags().StringVar(&initSSHKey, "ssh-key", "", "SSH 私钥路径")
+	initCmd.Flags().StringVar(&initDbName, "db-name", "", "MySQL 数据库名称（默认从项目名生成）")
 	initCmd.Flags().BoolVarP(&initForce, "force", "f", false, "强制覆盖已存在的目录")
 	initCmd.Flags().BoolVar(&initBackend, "backend-only", false, "纯后端模式")
 	initCmd.Flags().BoolVarP(&initYes, "yes", "y", false, "跳过交互式提示，使用默认值")
@@ -80,6 +82,9 @@ func runInit(cmd *cobra.Command, args []string) error {
 	}
 	if initSSHKey != "" {
 		cfg.SSHKey = initSSHKey
+	}
+	if initDbName != "" {
+		cfg.DbName = initDbName
 	}
 	if initBackend {
 		cfg.BackendOnly = true
