@@ -38,6 +38,12 @@ func (m *MySQLConfig) DSN() string {
 		m.User, m.Password, m.Host, m.Port, m.Database)
 }
 
+// DSNWithoutDB 返回不带数据库名的 DSN（用于创建数据库）
+func (m *MySQLConfig) DSNWithoutDB() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/?charset=utf8mb4&parseTime=True&loc=Local",
+		m.User, m.Password, m.Host, m.Port)
+}
+
 type RedisConfig struct {
 	Addr     string `yaml:"addr"`
 	Password string `yaml:"password"`

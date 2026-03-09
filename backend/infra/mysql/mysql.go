@@ -1,6 +1,8 @@
 package mysql
 
 import (
+	"fmt"
+
 	"q-dev/conf"
 	"q-dev/infra/mysql/dao"
 	"q-dev/infra/mysql/model"
@@ -13,7 +15,22 @@ import (
 var DB *gorm.DB
 
 func Init(cfg conf.MySQLConfig) error {
-	var err error
+	// 先连接到 mysql 服务器（不指定数据库），创建数据库（如果不存在）
+	createDB, err := gorm.Open(mysql.Open(cfg.DSNWithoutDB()), &gorm.Config{})
+	if err != nil {
+		return err
+	}
+	sqlCreateDB, err := createDB.DB()
+	if err != nil {
+		return err
+	}
+	defer sqlCreateDB.Close()
+
+	if err := createDB.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", cfg.Database)).Error; err != nil {
+		return err
+	}
+
+	// 连接到指定数据库
 	DB, err = gorm.Open(mysql.Open(cfg.DSN()), &gorm.Config{})
 	if err != nil {
 		return err
