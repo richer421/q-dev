@@ -27,7 +27,7 @@ func newHelloWorld(db *gorm.DB, opts ...gen.DOOption) helloWorld {
 
 	tableName := _helloWorld.helloWorldDo.TableName()
 	_helloWorld.ALL = field.NewAsterisk(tableName)
-	_helloWorld.ID = field.NewUint(tableName, "id")
+	_helloWorld.ID = field.NewInt64(tableName, "id")
 	_helloWorld.CreatedAt = field.NewTime(tableName, "created_at")
 	_helloWorld.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_helloWorld.Title = field.NewString(tableName, "title")
@@ -42,7 +42,7 @@ type helloWorld struct {
 	helloWorldDo helloWorldDo
 
 	ALL         field.Asterisk
-	ID          field.Uint
+	ID          field.Int64
 	CreatedAt   field.Time
 	UpdatedAt   field.Time
 	Title       field.String
@@ -63,7 +63,7 @@ func (h helloWorld) As(alias string) *helloWorld {
 
 func (h *helloWorld) updateTableName(table string) *helloWorld {
 	h.ALL = field.NewAsterisk(table)
-	h.ID = field.NewUint(table, "id")
+	h.ID = field.NewInt64(table, "id")
 	h.CreatedAt = field.NewTime(table, "created_at")
 	h.UpdatedAt = field.NewTime(table, "updated_at")
 	h.Title = field.NewString(table, "title")
